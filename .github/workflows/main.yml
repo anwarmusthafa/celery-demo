@@ -58,3 +58,5 @@ jobs:
           sudo systemctl restart nginx
         EOF
         rm private_key.pem
+
+# End
