@@ -21,7 +21,7 @@ app.conf.beat_schedule = {
     # Task to run every 30 seconds
     'send-mail-every-30-seconds': {
         'task': 'send_mail.tasks.send_mail_function',
-        'schedule': 7200.0,  # Interval in seconds
+        'schedule': 7000.0,  # Interval in seconds
     },
 }
 
