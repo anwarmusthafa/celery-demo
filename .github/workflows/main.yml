@@ -40,6 +40,12 @@ jobs:
         chmod 600 private_key.pem
         ssh -i private_key.pem -o StrictHostKeyChecking=no $USERNAME@$HOST << 'EOF'
           cd /home/ubuntu/celery-demo
+          # Ensure the working directory is clean, stashing any local changes
+          if ! git diff-index --quiet HEAD --; then
+              echo "Stashing local changes..."
+              git stash
+          fi
+          # Pull the latest changes from the main branch
           git pull origin main
           source /home/ubuntu/venv/bin/activate
           export SECRET_KEY=${SECRET_KEY}  # Set the SECRET_KEY
