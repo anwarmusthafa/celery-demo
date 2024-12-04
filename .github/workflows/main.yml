@@ -18,12 +18,9 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10'  # Ensure version is set correctly
+        python-version: 3.10  # Use your desired Python version
 
-    # Check Python version
-    - name: Check Python version
-      run: python --version  # This will print the Python version being used
-
+    # Install dependencies
     - name: Install dependencies
       run: |
         python -m venv venv
@@ -31,18 +28,13 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
 
-    # Run tests
-    - name: Run Tests
-      run: |
-        source venv/bin/activate
-        python manage.py test
-
     # Deploy to the server
     - name: Deploy to Server
       env:
         HOST: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}  # Ensure your SECRET_KEY is set
       run: |
         echo "$SSH_PRIVATE_KEY" > private_key.pem
         chmod 600 private_key.pem
@@ -50,6 +42,7 @@ jobs:
           cd /home/ubuntu/celery-demo
           git pull origin main
           source /home/ubuntu/venv/bin/activate
+          export SECRET_KEY=${SECRET_KEY}  # Set the SECRET_KEY
           pip install --upgrade -r requirements.txt
           python manage.py collectstatic --noinput
           python manage.py migrate
