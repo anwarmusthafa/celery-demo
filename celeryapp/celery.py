@@ -11,19 +11,17 @@ app = Celery('celeryapp')
 # Use a string here to avoid importing the Django settings file directly.
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
-
-
 # Celery Beat settings
 app.conf.beat_schedule = {
     # Task to run at 2:49 AM daily
     'send-mail-every-day-2-49-am': {
         'task': 'send_mail.tasks.send_mail_function',
-        'schedule': crontab(hour=0, minute=20),
+        'schedule': crontab(hour=2, minute=49),
     },
-    # Task to run every 30 minutes
-    'send-mail-every-30-minutes': {
+    # Task to run every 30 seconds
+    'send-mail-every-30-seconds': {
         'task': 'send_mail.tasks.send_mail_function',
-        'schedule': crontab(minute='*/30'),  # Runs at 0 and 30 minutes past every hour
+        'schedule': 60.0,  # Interval in seconds
     },
 }
 
