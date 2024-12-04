@@ -1,0 +1,57 @@
+name: CD/CI Celery Demo
+
+on:
+  push:
+    branches:
+      - main  # Trigger only on pushes to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Set up Python environment
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.10  # Replace with your Python version
+
+    - name: Install dependencies
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # Run tests
+    - name: Run Tests
+      run: |
+        source venv/bin/activate
+        python manage.py test
+
+    # Deploy to the server
+    - name: Deploy to Server
+      env:
+        HOST: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        echo "$SSH_PRIVATE_KEY" > private_key.pem
+        chmod 600 private_key.pem
+        ssh -i private_key.pem -o StrictHostKeyChecking=no $USERNAME@$HOST << 'EOF'
+          cd /home/ubuntu/celery-demo
+          git pull origin main
+          source /home/ubuntu/venv/bin/activate
+          pip install --upgrade -r requirements.txt
+          python manage.py collectstatic --noinput
+          python manage.py migrate
+          sudo supervisorctl restart gunicorn
+          sudo supervisorctl restart celery
+          sudo supervisorctl restart celery-beat
+          sudo systemctl restart nginx
+        EOF
+        rm private_key.pem
