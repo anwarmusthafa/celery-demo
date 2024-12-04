@@ -16,12 +16,12 @@ app.conf.beat_schedule = {
     # Task to run at 2:49 AM daily
     'send-mail-every-day-2-49-am': {
         'task': 'send_mail.tasks.send_mail_function',
-        'schedule': crontab(hour=2, minute=49),
+        'schedule': crontab(hour=0, minute=10),
     },
-    # Task to run every 30 seconds
-    'send-mail-every-30-seconds': {
+    # Task to run every 30 minutes
+    'send-mail-every-30-minutes': {
         'task': 'send_mail.tasks.send_mail_function',
-        'schedule': 120,  # Interval in seconds
+        'schedule': crontab(minute='*/30'),  # Runs at 0 and 30 minutes past every hour
     },
 }
 
