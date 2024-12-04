@@ -26,7 +26,7 @@ def register(request):
         if user:
             user.email = email
             user.save()  # Fixed the issue: Call the save() method as a function
-        return Response({"message": "User created successfully."}, status=201)
+        return Response({"message": "New User created successfully."}, status=201)
     except Exception as e:
         return Response({"error": str(e)}, status=400)
 
