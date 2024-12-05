@@ -53,15 +53,6 @@ jobs:
           python manage.py collectstatic --noinput
           python manage.py makemigrations
           python manage.py migrate
-
-          # Clean up periodic tasks
-          echo "Cleaning up periodic tasks..."
-          python manage.py shell << EOCLEANUP
-from django_celery_beat.models import PeriodicTask
-PeriodicTask.objects.all().delete()
-exit()
-EOCLEANUP
-
           sudo supervisorctl stop gunicorn
           sudo supervisorctl stop celery
           sudo supervisorctl stop celery-beat
@@ -73,3 +64,5 @@ EOCLEANUP
           sudo systemctl restart nginx
         EOF
         rm private_key.pem
+
+# End
