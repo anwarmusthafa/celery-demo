@@ -3,7 +3,7 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 
-# Set the default Django settings module for the 'celery' program.
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'celeryapp.settings')
 
 app = Celery('celeryapp')
@@ -21,7 +21,7 @@ app.conf.beat_schedule = {
     # Task to run every 30 seconds
     'send-mail-every-30-seconds': {
         'task': 'send_mail.tasks.send_mail_function',
-        'schedule': 3600.0,  # Interval in seconds
+        'schedule': crontab(minute='*/15') # Interval in seconds
     },
 }
 
