@@ -56,11 +56,11 @@ jobs:
 
           # Clean up periodic tasks
           echo "Cleaning up periodic tasks..."
-          python manage.py shell << 'EOCLEANUP'
-          from django_celery_beat.models import PeriodicTask
-          PeriodicTask.objects.all().delete()
-          exit()
-          EOCLEANUP
+          python manage.py shell << EOCLEANUP
+from django_celery_beat.models import PeriodicTask
+PeriodicTask.objects.all().delete()
+exit()
+EOCLEANUP
 
           sudo supervisorctl stop gunicorn
           sudo supervisorctl stop celery
